@@ -4,14 +4,14 @@ import { ProductService } from '../services/product.service';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
 
-import { addDays, addMonths, differenceInDays, differenceInMonths,  subDays, subMonths} from 'date-fns';
+import { addDays, addMonths, differenceInDays, differenceInMonths, subDays, subMonths } from 'date-fns';
 
 
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
   productDialog: boolean;
@@ -94,12 +94,16 @@ export class HomeComponent implements OnInit {
       }
       else {
         this.productService.saveProduit(this.product).then(res => {
-          this.products.push(this.product);
+          console.log(res)
+
+          this.products.push(res);
+          console.log(this.products)
+
           this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
         })
       }
 
-      this.products = [...this.products];
+
       this.productDialog = false;
       this.product = {};
     }
@@ -118,32 +122,31 @@ export class HomeComponent implements OnInit {
   }
 
 
-  checkVliditeOfDate(begin:any,end:any){
+  checkVliditeOfDate(begin: any, end: any) {
     begin = new Date(begin);
     end = new Date(end);
-    let find = this.dateRange(begin,end,"MONTH")
-console.log(find)
-    return "good"
+    let find = this.dateRange(begin, end)
+
+    if (find.length < 6) {
+      return "less than 6 month"
+
+    } else if (find.length > 6 && find.length < 7) {
+      return "more than 6 month and less than 7 month"
+
+    } else if (find.length > 7) {
+      return "more than 7 month"
+
+    }
+    return ""
   }
 
 
-  calculateDiff(begin: any, end: any) {
-    begin = new Date(begin);
-    end = new Date(end);
-    let result = Math.floor((Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()) - Date.UTC(begin.getFullYear(), begin.getMonth(), begin.getDate())) / (1000 * 60 * 60 * 24));
-    return result
-  }
 
-   dateRange(startDate : any, endDate :any, interval :any): any {
-    if (interval === "DAY") {
-      const days = differenceInDays(endDate, startDate);
-      return [...Array(days + 1).keys()].map((i) => addDays(startDate, i));
-    }
+  dateRange(startDate: any, endDate: any): any {
 
-    if (interval === "MONTH") {
-      const months = differenceInMonths(endDate, startDate);
-      return [...Array(months + 1).keys()].map((i) => addMonths(startDate, i));
-    }
+    const months = differenceInMonths(endDate, startDate);
+    return [...Array(months + 1).keys()].map((i) => addMonths(startDate, i));
+
   }
 
 }

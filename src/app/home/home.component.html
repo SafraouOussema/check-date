@@ -71,7 +71,7 @@
     </p-table>
 </div>
 
-<p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true"
+<p-dialog [(visible)]="productDialog" class="dialog" [style]="{width: '850px'}" header="Product Details" [modal]="true"
     styleClass="p-fluid">
     <ng-template pTemplate="content">
 
@@ -97,19 +97,17 @@
 
         <div class="p-formgrid p-grid">
             <div class="p-field p-col">
-                <label for="dateDeFabrication">Date de fabrication</label>
-
-                <p-calendar yearRange="2000:2100" [showIcon]="true" dataType="string"
+                <label for="dateDeFabrication">Date de fabrication</label> 
+                <p-calendar yearRange="2000:2100" [showIcon]="true" dataType="string"  
                     [(ngModel)]="product.dateDeFabrication" dateFormat="yy-mm-dd">
-                </p-calendar>
-
+                </p-calendar> 
                 <small class="p-invalid" *ngIf="submitted && !product.dateDeFabrication">Date de fabrication is
                     required.</small>
             </div>
             <div class="p-field p-col">
                 <label for="dateDePeremption">Date de peremption</label>
                 <p-calendar yearRange="2000:2100" [showIcon]="true" dataType="string"
-                    [(ngModel)]="product.dateDePeremption" dateFormat="yy-mm-dd">
+               [(ngModel)]="product.dateDePeremption" dateFormat="yy-mm-dd">
                 </p-calendar>
                 <small class="p-invalid" *ngIf="submitted && !product.dateDePeremption">Date de peremption is
                     required.</small>
