@@ -1,0 +1,125 @@
+<p-toast></p-toast>
+
+<div class="card">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2"
+                (click)="openNew()"></button>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"></button>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="products" [rows]="10" [paginator]="true"
+        [globalFilterFields]="['name','code','quantite','dateDePeremption','dateDeFabrication']"
+        [(selection)]="selectedProducts" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                <h5 class="p-m-0">Manage Products</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                        placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon>
+                </th>
+                <th pSortableColumn="code">Code <p-sortIcon field="code"></p-sortIcon>
+                </th>
+                <th pSortableColumn="quantite">Quantité <p-sortIcon field="quantite"></p-sortIcon>
+                </th>
+                <th pSortableColumn="dateDeFabrication">Date de fabrication <p-sortIcon field="dateDeFabrication">
+                    </p-sortIcon>
+                </th>
+                <th pSortableColumn="dateDePeremption">Date de peremption <p-sortIcon field="dateDePeremption">
+                    </p-sortIcon>
+                </th>
+                <th pSortableColumn="dateDePeremption">Validité de date<p-sortIcon field="dateDePeremption">
+                    </p-sortIcon>
+                </th> 
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+            <tr>
+
+                <td>{{product.name}}</td>
+                <td>{{product.code}}</td>
+                <td>{{product.quantite}}</td>
+                <td>{{product.dateDeFabrication}}</td>
+                <td>{{product.dateDePeremption}}</td> 
+                <td>{{checkVliditeOfDate(product.dateDeFabrication,product.dateDePeremption)}}</td>
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
+                        (click)="editProduct(product)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        (click)="deleteProduct(product)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                In total there are {{products ? products.length : 0 }} products.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+
+        <div class="p-formgrid p-grid">
+            <div class="p-field p-col">
+                <label for="name">Name</label>
+                <input type="text" pInputText id="name" [(ngModel)]="product.name" required autofocus />
+                <small class="p-invalid" *ngIf="submitted && !product.name">Name is required.</small>
+            </div>
+            <div class="p-field p-col">
+                <label for="code">Code</label>
+                <input type="text" pInputText id="code" [(ngModel)]="product.code" required autofocus />
+                <small class="p-invalid" *ngIf="submitted && !product.code">Code is required.</small>
+            </div>
+            <div class="p-field p-col">
+                <label for="quantite">Quantite</label>
+                <input type="text" pInputText id="quantite" [(ngModel)]="product.quantite" required autofocus />
+                <small class="p-invalid" *ngIf="submitted && !product.quantite">Code is required.</small>
+            </div>
+
+        </div>
+
+
+        <div class="p-formgrid p-grid">
+            <div class="p-field p-col">
+                <label for="dateDeFabrication">Date de fabrication</label>
+
+                <p-calendar yearRange="2000:2100" [showIcon]="true" dataType="string"
+                    [(ngModel)]="product.dateDeFabrication" dateFormat="yy-mm-dd">
+                </p-calendar>
+
+                <small class="p-invalid" *ngIf="submitted && !product.dateDeFabrication">Date de fabrication is
+                    required.</small>
+            </div>
+            <div class="p-field p-col">
+                <label for="dateDePeremption">Date de peremption</label>
+                <p-calendar yearRange="2000:2100" [showIcon]="true" dataType="string"
+                    [(ngModel)]="product.dateDePeremption" dateFormat="yy-mm-dd">
+                </p-calendar>
+                <small class="p-invalid" *ngIf="submitted && !product.dateDePeremption">Date de peremption is
+                    required.</small>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveProduct()"></button>
+    </ng-template>
+</p-dialog>
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
