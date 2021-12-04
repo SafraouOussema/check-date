@@ -8,7 +8,7 @@
         </ng-template>
 
         <ng-template pTemplate="right">
-            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"></button>
+            <button pButton pRipple label="Export" icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-help"></button>
         </ng-template>
     </p-toolbar>
 
@@ -40,9 +40,10 @@
                 <th pSortableColumn="dateDePeremption">Date de peremption <p-sortIcon field="dateDePeremption">
                     </p-sortIcon>
                 </th>
-                <th pSortableColumn="dateDePeremption">Validité de date<p-sortIcon field="dateDePeremption">
-                    </p-sortIcon>
+                <th   >Validité de date 
                 </th> 
+                <th   >Nombre  de jour </th> 
+            
                 <th></th>
             </tr>
         </ng-template>
@@ -55,6 +56,9 @@
                 <td>{{product.dateDeFabrication}}</td>
                 <td>{{product.dateDePeremption}}</td> 
                 <td>{{checkVliditeOfDate(product.dateDeFabrication,product.dateDePeremption)}}</td>
+                <td>{{calculateNumberOfDay (product.dateDeFabrication,product.dateDePeremption)}}</td> 
+                <td>{{findMidelDqy (product.dateDeFabrication,product.dateDePeremption)}}</td>
+                
                 <td>
                     <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
                         (click)="editProduct(product)"></button>

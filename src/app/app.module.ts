@@ -32,6 +32,7 @@ import { MessageService } from 'primeng/api';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 
   
+import {DatePipe} from '@angular/common';
 import {InputSwitchModule} from 'primeng/inputswitch'; 
 
 
@@ -72,7 +73,7 @@ import {InputSwitchModule} from 'primeng/inputswitch';
 
 		])
   ],
-  providers: [ProductService, MessageService, ConfirmationService],
+  providers: [ProductService, DatePipe,MessageService, ConfirmationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -3,8 +3,11 @@ import { Product } from '../models/product';
 import { ProductService } from '../services/product.service';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
+import { DatePipe, registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
 
 import { addDays, addMonths, differenceInDays, differenceInMonths, subDays, subMonths } from 'date-fns';
+
 
 
 
@@ -24,10 +27,19 @@ export class HomeComponent implements OnInit {
 
   submitted: boolean;
 
-  constructor(private productService: ProductService, private messageService: MessageService, private confirmationService: ConfirmationService) { }
+  exportColumns: any[];
+
+
+  constructor(private productService: ProductService,
+     private messageService: MessageService,
+      private confirmationService: ConfirmationService,
+      private       datePipe: DatePipe
+
+      ) { }
 
   ngOnInit() {
-
+    registerLocaleData(localeFr, 'fr');
+    this.datePipe = new DatePipe("fr");
     this.productService.getAllProduit().then(data => {
       console.log(data);
       this.products = data;
@@ -126,15 +138,18 @@ export class HomeComponent implements OnInit {
     begin = new Date(begin);
     end = new Date(end);
     let find = this.dateRange(begin, end)
-
     if (find.length < 6) {
       return "less than 6 month"
 
-    } else if (find.length > 6 && find.length < 7) {
-      return "more than 6 month and less than 7 month"
+    } else if (find.length == 6) {
 
-    } else if (find.length > 7) {
-      return "more than 7 month"
+      return " 6 month "
+
+    }
+    else if (find.length > 6) {
+
+
+      return "more than 6 month"
 
     }
     return ""
@@ -145,7 +160,35 @@ export class HomeComponent implements OnInit {
   dateRange(startDate: any, endDate: any): any {
 
     const months = differenceInMonths(endDate, startDate);
+    console.log("differenceInMonths", months)
     return [...Array(months + 1).keys()].map((i) => addMonths(startDate, i));
+
+  }
+
+
+  calculateNumberOfDay(begin: any, end: any) {
+    begin = new Date(begin);
+    end = new Date(end);
+    const days = differenceInDays(end, begin);
+    let list = [...Array(days + 1).keys()].map((i) => addDays(begin, i));
+    return days
+  }
+
+  
+  findMidelDqy(begin: any, end: any) {
+    begin = new Date(begin);
+    end = new Date(end);
+    const days = differenceInDays(end, begin);
+    let list = [...Array(days + 1).keys()].map((i) => addDays(begin, i));
+    let midle =  Math.floor(list.length/2) 
+
+    console.log("midle",midle)
+    console.log("list",list[midle]) 
+    return   this.datePipe.transform(new Date(list[midle]), 'fullDate')
+  }
+
+  exportPdf() {
+
 
   }
 
