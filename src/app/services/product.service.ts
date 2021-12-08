@@ -8,8 +8,9 @@ import { Product } from '../models/product';
 })
 export class ProductService {
 
+    public API = 'https://juniorbackend.herokuapp.com/application';
 
-    public API = 'http://localhost:8080/application';
+  //  public API = 'http://localhost:8080/application';
 
     public produitAPI = this.API + '/produit';
 
