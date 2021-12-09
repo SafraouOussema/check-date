@@ -8,6 +8,9 @@ import localeFr from '@angular/common/locales/fr';
 
 import { addDays, addMonths, differenceInDays, differenceInMonths, subDays, subMonths } from 'date-fns';
 
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+
 
 
 
@@ -31,11 +34,11 @@ export class HomeComponent implements OnInit {
 
 
   constructor(private productService: ProductService,
-     private messageService: MessageService,
-      private confirmationService: ConfirmationService,
-      private       datePipe: DatePipe
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private datePipe: DatePipe
 
-      ) { }
+  ) { }
 
   ngOnInit() {
     registerLocaleData(localeFr, 'fr');
@@ -138,6 +141,7 @@ export class HomeComponent implements OnInit {
     begin = new Date(begin);
     end = new Date(end);
     let find = this.dateRange(begin, end)
+    console.log(find)
     if (find.length < 6) {
       return "less than 6 month"
 
@@ -174,22 +178,30 @@ export class HomeComponent implements OnInit {
     return days
   }
 
-  
+
   findMidelDqy(begin: any, end: any) {
     begin = new Date(begin);
     end = new Date(end);
     const days = differenceInDays(end, begin);
     let list = [...Array(days + 1).keys()].map((i) => addDays(begin, i));
-    let midle =  Math.floor(list.length/2) 
+    let midle = Math.floor(list.length / 2)
 
-    console.log("midle",midle)
-    console.log("list",list[midle]) 
-    return   this.datePipe.transform(new Date(list[midle]), 'fullDate')
+    console.log("midle", midle)
+    console.log("list", list[midle])
+    return this.datePipe.transform(new Date(list[midle]), 'fullDate')
   }
 
   exportPdf() {
+ 
 
+    const doc = new jsPDF();
+ 
+    autoTable(doc, { html: '.p-datatable-table' });
+    doc.save("fiche.pdf");
+ 
 
   }
+
+
 
 }

@@ -8,11 +8,12 @@
         </ng-template>
 
         <ng-template pTemplate="right">
-            <button pButton pRipple label="Export" icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-help"></button>
+            <button pButton pRipple label="Export" icon="pi pi-file-pdf" (click)="exportPdf()"
+                class="p-button-help"></button>
         </ng-template>
     </p-toolbar>
 
-    <p-table #dt [value]="products" [rows]="10" [paginator]="true"
+    <p-table #dt [value]="products" [rows]="10" [paginator]="true" id="my-header"
         [globalFilterFields]="['name','code','quantite','dateDePeremption','dateDeFabrication']"
         [(selection)]="selectedProducts" [rowHover]="true" dataKey="id"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
@@ -40,10 +41,10 @@
                 <th pSortableColumn="dateDePeremption">Date de peremption <p-sortIcon field="dateDePeremption">
                     </p-sortIcon>
                 </th>
-                <th   >Validité de date 
-                </th> 
-                <th   >Nombre  de jour </th> 
-            
+                <th>Validité de date
+                </th>
+                <th>Nombre de jour </th>
+                <th>Jour </th>
                 <th></th>
             </tr>
         </ng-template>
@@ -54,11 +55,11 @@
                 <td>{{product.code}}</td>
                 <td>{{product.quantite}}</td>
                 <td>{{product.dateDeFabrication}}</td>
-                <td>{{product.dateDePeremption}}</td> 
+                <td>{{product.dateDePeremption}}</td>
                 <td>{{checkVliditeOfDate(product.dateDeFabrication,product.dateDePeremption)}}</td>
-                <td>{{calculateNumberOfDay (product.dateDeFabrication,product.dateDePeremption)}}</td> 
+                <td>{{calculateNumberOfDay (product.dateDeFabrication,product.dateDePeremption)}}</td>
                 <td>{{findMidelDqy (product.dateDeFabrication,product.dateDePeremption)}}</td>
-                
+
                 <td>
                     <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
                         (click)="editProduct(product)"></button>
@@ -101,17 +102,17 @@
 
         <div class="p-formgrid p-grid">
             <div class="p-field p-col">
-                <label for="dateDeFabrication">Date de fabrication</label> 
-                <p-calendar yearRange="2000:2100" [showIcon]="true" dataType="string"  
+                <label for="dateDeFabrication">Date de fabrication</label>
+                <p-calendar yearRange="2000:2100" [showIcon]="true" dataType="string"
                     [(ngModel)]="product.dateDeFabrication" dateFormat="yy-mm-dd">
-                </p-calendar> 
+                </p-calendar>
                 <small class="p-invalid" *ngIf="submitted && !product.dateDeFabrication">Date de fabrication is
                     required.</small>
             </div>
             <div class="p-field p-col">
                 <label for="dateDePeremption">Date de peremption</label>
                 <p-calendar yearRange="2000:2100" [showIcon]="true" dataType="string"
-               [(ngModel)]="product.dateDePeremption" dateFormat="yy-mm-dd">
+                    [(ngModel)]="product.dateDePeremption" dateFormat="yy-mm-dd">
                 </p-calendar>
                 <small class="p-invalid" *ngIf="submitted && !product.dateDePeremption">Date de peremption is
                     required.</small>
