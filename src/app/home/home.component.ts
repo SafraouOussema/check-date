@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit {
     registerLocaleData(localeFr, 'fr');
     this.datePipe = new DatePipe("fr");
     this.productService.getAllProduit().then(data => {
-      console.log(data);
+
       this.products = data;
     })
 
@@ -109,10 +109,9 @@ export class HomeComponent implements OnInit {
       }
       else {
         this.productService.saveProduit(this.product).then(res => {
-          console.log(res)
+
 
           this.products.push(res);
-          console.log(this.products)
 
           this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
         })
@@ -141,15 +140,10 @@ export class HomeComponent implements OnInit {
 
     begin = new Date(begin);
     end = new Date(end);
-    let find = this.dateRange(begin, end)
-    console.log(find)
 
-      
     let dateDiff = this.dateDiff(begin, end)
 
-      console.log("dateDiff",dateDiff)
-
-    return dateDiff ;
+    return dateDiff;
   }
 
 
@@ -157,7 +151,7 @@ export class HomeComponent implements OnInit {
   dateRange(startDate: any, endDate: any): any {
 
     const months = differenceInMonths(endDate, startDate);
-    console.log("differenceInMonths", months)
+
     return [...Array(months + 1).keys()].map((i) => addMonths(startDate, i));
 
   }
@@ -167,7 +161,7 @@ export class HomeComponent implements OnInit {
     begin = new Date(begin);
     end = new Date(end);
     const days = differenceInDays(end, begin);
-    let list = [...Array(days + 1).keys()].map((i) => addDays(begin, i));
+
     return days
   }
 
@@ -179,93 +173,88 @@ export class HomeComponent implements OnInit {
     let list = [...Array(days + 1).keys()].map((i) => addDays(begin, i));
     let midle = Math.floor(list.length / 2)
 
-    console.log("midle", midle)
-    console.log("list", list[midle])
+
     return this.datePipe.transform(new Date(list[midle]), 'fullDate')
   }
 
   exportPdf() {
- 
+
 
     const doc = new jsPDF();
- 
+
     autoTable(doc, { html: '.p-datatable-table' });
     doc.save("fiche.pdf");
- 
+
 
   }
 
 
-   getMonthsBetween(date1: any,date2: any,roundUpFractionalMonths: any)
-{
+  getMonthsBetween(date1: any, date2: any, roundUpFractionalMonths: any) {
     //Months will be calculated between start and end dates.
     //Make sure start date is less than end date.
     //But remember if the difference should be negative.
-    var startDate=date1;
-    var endDate=date2;
-    var inverse=false;
-    if(date1>date2)
-    {
-        startDate=date2;
-        endDate=date1;
-        inverse=true;
+    var startDate = date1;
+    var endDate = date2;
+    var inverse = false;
+    if (date1 > date2) {
+      startDate = date2;
+      endDate = date1;
+      inverse = true;
     }
 
     //Calculate the differences between the start and end dates
-    var yearsDifference=endDate.getFullYear()-startDate.getFullYear();
-    var monthsDifference=endDate.getMonth()-startDate.getMonth();
-    var daysDifference=endDate.getDate()-startDate.getDate();
+    var yearsDifference = endDate.getFullYear() - startDate.getFullYear();
+    var monthsDifference = endDate.getMonth() - startDate.getMonth();
+    var daysDifference = endDate.getDate() - startDate.getDate();
 
-    var monthCorrection=0;
+    var monthCorrection = 0;
     //If roundUpFractionalMonths is true, check if an extra month needs to be added from rounding up.
     //The difference is done by ceiling (round up), e.g. 3 months and 1 day will be 4 months.
-    if(roundUpFractionalMonths===true && daysDifference>0)
-    {
-        monthCorrection=1;
+    if (roundUpFractionalMonths === true && daysDifference > 0) {
+      monthCorrection = 1;
     }
     //If the day difference between the 2 months is negative, the last month is not a whole month.
-    else if(roundUpFractionalMonths!==true && daysDifference<0)
-    {
-        monthCorrection=-1;
+    else if (roundUpFractionalMonths !== true && daysDifference < 0) {
+      monthCorrection = -1;
     }
 
-    return (inverse?-1:1)*(yearsDifference*12+monthsDifference+monthCorrection);
-}
-
-dateDiff(startingDate: any, endingDate: any) {
-  var startDate = new Date(new Date(startingDate).toISOString().substr(0, 10));
-  if (!endingDate) {
-      endingDate = new Date().toISOString().substr(0, 10);    // need date in YYYY-MM-DD format
+    return (inverse ? -1 : 1) * (yearsDifference * 12 + monthsDifference + monthCorrection);
   }
-  var endDate = new Date(endingDate);
-  if (startDate > endDate) {
+
+  dateDiff(startingDate: any, endingDate: any) {
+    var startDate = new Date(new Date(startingDate).toISOString().substr(0, 10));
+    if (!endingDate) {
+      endingDate = new Date().toISOString().substr(0, 10);    // need date in YYYY-MM-DD format
+    }
+    var endDate = new Date(endingDate);
+    if (startDate > endDate) {
       var swap = startDate;
       startDate = endDate;
       endDate = swap;
-  }
-  var startYear = startDate.getFullYear();
-  var february = (startYear % 4 === 0 && startYear % 100 !== 0) || startYear % 400 === 0 ? 29 : 28;
-  var daysInMonth = [31, february, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    }
+    var startYear = startDate.getFullYear();
+    var february = (startYear % 4 === 0 && startYear % 100 !== 0) || startYear % 400 === 0 ? 29 : 28;
+    var daysInMonth = [31, february, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-  var yearDiff = endDate.getFullYear() - startYear;
-  var monthDiff = endDate.getMonth() - startDate.getMonth();
-  if (monthDiff < 0) {
+    var yearDiff = endDate.getFullYear() - startYear;
+    var monthDiff = endDate.getMonth() - startDate.getMonth();
+    if (monthDiff < 0) {
       yearDiff--;
       monthDiff += 12;
-  }
-  var dayDiff = endDate.getDate() - startDate.getDate();
-  if (dayDiff < 0) {
+    }
+    var dayDiff = endDate.getDate() - startDate.getDate();
+    if (dayDiff < 0) {
       if (monthDiff > 0) {
-          monthDiff--;
+        monthDiff--;
       } else {
-          yearDiff--;
-          monthDiff = 11;
+        yearDiff--;
+        monthDiff = 11;
       }
       dayDiff += daysInMonth[startDate.getMonth()];
-  }
+    }
 
-  return yearDiff + ' annee ' + monthDiff + ' mois ' + dayDiff + ' jour';
-}
+    return yearDiff + ' annee ' + monthDiff + ' mois ' + dayDiff + ' jour';
+  }
 
 
 }
