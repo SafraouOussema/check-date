@@ -177,15 +177,17 @@ export class HomeComponent implements OnInit {
     return this.datePipe.transform(new Date(list[midle]), 'fullDate')
   }
 
-  exportPdf() {
-
-
+  exportPdf() { 
     const doc = new jsPDF();
+    autoTable(doc, { html: '.p-datatable-table', theme: 'grid' });
+    doc.save("PlaisirDuChocolat.pdf"); 
+  }
 
-    autoTable(doc, { html: '.p-datatable-table' });
-    doc.save("fiche.pdf");
-
-
+  imprimerPdf() {
+    const doc = new jsPDF();
+    autoTable(doc, { html: '.p-datatable-table', theme: 'grid' });
+    doc.autoPrint();
+    doc.output('dataurlnewwindow');
   }
 
 

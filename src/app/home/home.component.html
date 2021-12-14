@@ -6,9 +6,11 @@
             <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2"
                 (click)="openNew()"></button>
         </ng-template>
-
+      
         <ng-template pTemplate="right">
-            <button pButton pRipple label="Export" icon="pi pi-file-pdf" (click)="exportPdf()"
+            <button pButton pRipple label="Imprimer" icon="pi pi-print" (click)="imprimerPdf()"
+            class="p-button-help"></button>
+            <button pButton pRipple label="Exporter" icon="pi pi-file-pdf" (click)="exportPdf()"
                 class="p-button-help"></button>
         </ng-template>
     </p-toolbar>
@@ -45,7 +47,7 @@
                 </th>
                 <th>Nombre de jour </th>
                 <th>Jour </th>
-                <th></th>
+                <th>Actions</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-product>
