@@ -32,7 +32,8 @@ export class HomeComponent implements OnInit {
 
   exportColumns: any[];
 
-
+  first = 0;
+  rows = 10;
   constructor(private productService: ProductService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
@@ -46,6 +47,14 @@ export class HomeComponent implements OnInit {
     this.productService.getAllProduit().then(data => {
 
       this.products = data;
+
+      this.products.forEach(element => {
+
+        element.validDate = this.checkVliditeOfDate(element.dateDeFabrication, element.dateDePeremption);
+        element.nbrDate = this.calculateNumberOfDay(element.dateDeFabrication, element.dateDePeremption)
+        element.day = this.findMidelDqy(element.dateDeFabrication, element.dateDePeremption)
+      })
+
     })
 
   }
@@ -109,10 +118,7 @@ export class HomeComponent implements OnInit {
       }
       else {
         this.productService.saveProduit(this.product).then(res => {
-
-
           this.products.push(res);
-
           this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
         })
       }
@@ -147,7 +153,6 @@ export class HomeComponent implements OnInit {
   }
 
 
-
   dateRange(startDate: any, endDate: any): any {
 
     const months = differenceInMonths(endDate, startDate);
@@ -167,20 +172,55 @@ export class HomeComponent implements OnInit {
 
 
   findMidelDqy(begin: any, end: any) {
-    begin = new Date(begin);
-    end = new Date(end);
-    const days = differenceInDays(end, begin);
-    let list = [...Array(days + 1).keys()].map((i) => addDays(begin, i));
-    let midle = Math.floor(list.length / 2)
+
+    if (begin != null && end != null) {
+
+      begin = new Date(begin);
+      end = new Date(end);
+
+      const days = differenceInDays(end, begin);
+      let list = [...Array(days + 1).keys()].map((i) => addDays(begin, i));
+      let midle = Math.floor(list.length / 2)
 
 
-    return this.datePipe.transform(new Date(list[midle]), 'fullDate')
+      return this.datePipe.transform(new Date(list[midle]), 'fullDate')
+    }
+    else {
+      return ''
+    }
   }
 
-  exportPdf() { 
+  exportPdf() {
+   
+
+    this.exportColumns = [
+      { dataKey: 'name', header: 'Name' },
+      { dataKey: 'code', header: 'Code' },
+      { dataKey: 'quantity', header: 'Quantity' },
+      { dataKey: 'dateDeFabrication', header: 'Date de fabrication' },
+      { dataKey: 'dateDePeremption', header: 'Date de peremption' },
+      { dataKey: 'validDate', header: 'Validité de date' },
+      { dataKey: 'nbrDate', header: 'Nombre de jour' },
+      { dataKey: 'day', header: 'Jour' },
+    ];
+    let bodys: any[]=[];
+    this.products.forEach(element => {
+      let row = [element.name, element.code, element.quantite, element.dateDeFabrication, element.dateDePeremption, element.validDate, element.nbrDate, element.day]
+      bodys.push(row)
+    })
+
+    
+setTimeout(() => {
+  this.export(bodys)
+}, 100);
+
+  }
+
+  export(bodys: any){
     const doc = new jsPDF();
-    autoTable(doc, { html: '.p-datatable-table', theme: 'grid' });
-    doc.save("PlaisirDuChocolat.pdf"); 
+    autoTable(doc, { columns: this.exportColumns, body: bodys, theme: 'grid' });
+
+    doc.save("PlaisirDuChocolat.pdf");
   }
 
   imprimerPdf() {
@@ -258,5 +298,12 @@ export class HomeComponent implements OnInit {
     return yearDiff + ' annee ' + monthDiff + ' mois ' + dayDiff + ' jour';
   }
 
+  isLastPage(): boolean {
+    return this.products ? this.first === (this.products.length - this.rows) : true;
+  }
+
+  next() {
+    this.first = this.first + this.rows;
+  }
 
 }

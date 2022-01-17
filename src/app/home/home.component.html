@@ -15,13 +15,13 @@
         </ng-template>
     </p-toolbar>
 
-    <p-table #dt [value]="products" [rows]="10" [paginator]="true" id="my-header"
+    <p-table #dt [value]="products" [rows]="10" [paginator]="true" id="my-header" [(first)]="first"
         [globalFilterFields]="['name','code','quantite','dateDePeremption','dateDeFabrication']"
-        [(selection)]="selectedProducts" [rowHover]="true" dataKey="id"
+        [(selection)]="selectedProducts" [rowHover]="true" dataKey="id"  
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
         <ng-template pTemplate="caption">
             <div class="p-d-flex p-ai-center p-jc-between">
-                <h5 class="p-m-0">Manage Products</h5>
+                <h5 class="p-m-0"> </h5>
                 <span class="p-input-icon-left">
                     <i class="pi pi-search"></i>
                     <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
@@ -58,10 +58,14 @@
                 <td>{{product.quantite}}</td>
                 <td>{{product.dateDeFabrication}}</td>
                 <td>{{product.dateDePeremption}}</td>
-                <td>{{checkVliditeOfDate(product.dateDeFabrication,product.dateDePeremption)}}</td>
-                <td>{{calculateNumberOfDay (product.dateDeFabrication,product.dateDePeremption)}}</td>
-                <td>{{findMidelDqy (product.dateDeFabrication,product.dateDePeremption)}}</td>
 
+                <!-- <td>{{checkVliditeOfDate(product.dateDeFabrication,product.dateDePeremption)}}</td>
+                <td>{{calculateNumberOfDay (product.dateDeFabrication,product.dateDePeremption)}}</td>
+                <td>{{findMidelDqy (product.dateDeFabrication,product.dateDePeremption)}}</td> -->
+                <td>{{product.validDate}}</td>
+                <td>{{product.nbrDate}}</td>
+                <td>{{product.day}}</td>
+ 
                 <td>
                     <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
                         (click)="editProduct(product)"></button>

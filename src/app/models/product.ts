@@ -5,4 +5,7 @@ export interface Product {
     dateDeFabrication?:string; 
     dateDePeremption?:string; 
     quantite?:number;
+    validDate?:string,
+    nbrDate?:number,
+    day?:string,
 }
