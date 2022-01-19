@@ -218,7 +218,22 @@ setTimeout(() => {
 
   export(bodys: any){
     const doc = new jsPDF();
-    autoTable(doc, { columns: this.exportColumns, body: bodys, theme: 'grid' });
+
+    const pageWidth = doc.internal.pageSize.width; //Optional
+    const pageHeight = doc.internal.pageSize.height; //Optional
+    let horizontalPos = pageWidth / 2; //Can be fixed number
+    let verticalPos = pageHeight - 10; //Can be fixed number
+
+    doc.setFont('bold');
+    doc.setFontSize(22);
+    doc.text("Plaisir du Chocolat", horizontalPos, 15, {
+      align: 'center'
+    });
+    doc.setFont('normal')
+    doc.setFontSize(14);
+
+
+    autoTable(doc, { columns: this.exportColumns, body: bodys,  margin: { top: 40 }, theme: 'grid'  });
 
     doc.save("PlaisirDuChocolat.pdf");
   }
