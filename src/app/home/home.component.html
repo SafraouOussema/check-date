@@ -3,8 +3,11 @@
 <div class="card">
     <p-toolbar styleClass="p-mb-4">
         <ng-template pTemplate="left">
-            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2"
+            <button pButton pRipple label="Ajouter un produit " icon="pi pi-plus" class="p-button-success p-mr-2"
                 (click)="openNew()"></button>
+                
+            <button pButton pRipple label="ajouter une facture " icon="pi pi-plus" class="p-button-success p-mr-2"
+            (click)="openNewFacture()"></button>
         </ng-template>
       
         <ng-template pTemplate="right">
@@ -81,7 +84,7 @@
         </ng-template>
     </p-table>
 </div>
-
+ 
 <p-dialog [(visible)]="productDialog" class="dialog" [style]="{width: '850px'}" header="Product Details" [modal]="true"
     styleClass="p-fluid">
     <ng-template pTemplate="content">
@@ -129,6 +132,38 @@
     <ng-template pTemplate="footer">
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
         <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveProduct()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="factureDialog" class="dialog" [style]="{width: '850px'}" header="Ajouter Facture" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+
+        <div style="padding-top: 200px;" class="p-formgrid p-grid">
+            <div class="p-field p-col">
+                <label for="name">Numéro de facture</label>
+                <input type="text" pInputText id="numberOfFacture" [(ngModel)]="addFacture.numberOfFacture" required autofocus />
+                <small class="p-invalid" *ngIf="submitted && !addFacture.numberOfFacture">Numéro de facture est obligatoire..</small>
+            </div>
+            <div class="p-field p-col">
+              
+                <label for="dateOfFacture">Date de facture</label>
+                <p-calendar yearRange="2000:2100" [showIcon]="true" dataType="string"
+                    [(ngModel)]="addFacture.dateOfFacture" dateFormat="yy-mm-dd">
+                </p-calendar>
+                <small class="p-invalid" *ngIf="submitted && !addFacture.dateOfFacture">Date de fabrication est
+                    obligatoire.</small>
+            </div>
+            
+
+        </div>
+
+ 
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialogFacture()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveFacture()"></button>
     </ng-template>
 </p-dialog>
 <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

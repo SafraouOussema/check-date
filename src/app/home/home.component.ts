@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Product } from '../models/product';
-import { ProductService } from '../services/product.service';
+import { Facture } from '../models/facture';
+
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
 import { DatePipe, registerLocaleData } from '@angular/common';
@@ -12,6 +13,8 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
 
+import { FactureService } from '../services/facture.service';
+import { ProductService } from '../services/product.service';
 
 
 @Component({
@@ -21,6 +24,7 @@ import autoTable from "jspdf-autotable";
 })
 export class HomeComponent implements OnInit {
   productDialog: boolean;
+  factureDialog: boolean;
 
   products: Product[];
 
@@ -32,10 +36,14 @@ export class HomeComponent implements OnInit {
 
   exportColumns: any[];
 
+  facture: Facture;
+  addFacture: Facture;
+
   first = 0;
   rows = 10;
   constructor(private productService: ProductService,
     private messageService: MessageService,
+    private factureService: FactureService,
     private confirmationService: ConfirmationService,
     private datePipe: DatePipe
 
@@ -57,6 +65,9 @@ export class HomeComponent implements OnInit {
 
     })
 
+    this.factureService.getAllFacture().then(res => {
+        this.facture = res[0];
+    })
   }
 
   openNew() {
@@ -105,6 +116,7 @@ export class HomeComponent implements OnInit {
     this.submitted = false;
   }
 
+
   saveProduct() {
     this.submitted = true;
 
@@ -112,14 +124,14 @@ export class HomeComponent implements OnInit {
       if (this.product.id) {
         this.productService.updateProduit(this.product).then(res => {
           this.products[this.findIndexById(this.product.id)] = this.product;
-          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
+          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Produit mise a jour', life: 3000 });
 
         })
       }
       else {
         this.productService.saveProduit(this.product).then(res => {
           this.products.push(res);
-          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
+          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Produit ajouter', life: 3000 });
         })
       }
 
@@ -139,6 +151,36 @@ export class HomeComponent implements OnInit {
     }
 
     return index;
+  }
+
+  openNewFacture() {
+    this.factureDialog = true;
+    this.addFacture = {};
+
+  }
+
+  hideDialogFacture() {
+    this.factureDialog = false;
+  }
+
+  saveFacture() {
+    if (this.facture != undefined && this.facture != null) {
+      this.factureService.removeFacture(this.facture.id).then(res => {
+        this.factureService.saveFacture(this.addFacture).then(res => {
+          this.facture = res;
+          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Facture ajouter', life: 3000 });
+        })
+
+      })
+    } else {
+      this.factureService.saveFacture(this.addFacture).then(res => {
+        this.facture = res;
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Facture ajouter', life: 3000 });
+      })
+    }
+    this.factureDialog = false;
+
+
   }
 
 
@@ -191,7 +233,7 @@ export class HomeComponent implements OnInit {
   }
 
   exportPdf() {
-   
+
 
     this.exportColumns = [
       { dataKey: 'name', header: 'Name' },
@@ -203,20 +245,20 @@ export class HomeComponent implements OnInit {
       { dataKey: 'nbrDate', header: 'Nombre de jour' },
       { dataKey: 'day', header: 'Jour' },
     ];
-    let bodys: any[]=[];
+    let bodys: any[] = [];
     this.products.forEach(element => {
       let row = [element.name, element.code, element.quantite, element.dateDeFabrication, element.dateDePeremption, element.validDate, element.nbrDate, element.day]
       bodys.push(row)
     })
 
-    
-setTimeout(() => {
-  this.export(bodys)
-}, 100);
+
+    setTimeout(() => {
+      this.export(bodys)
+    }, 100);
 
   }
 
-  export(bodys: any){
+  export(bodys: any) {
     const doc = new jsPDF();
 
     const pageWidth = doc.internal.pageSize.width; //Optional
@@ -232,8 +274,20 @@ setTimeout(() => {
     doc.setFont('normal')
     doc.setFontSize(14);
 
+    doc.text('Les Berges du Lac 1',20, 25)
 
-    autoTable(doc, { columns: this.exportColumns, body: bodys,  margin: { top: 40 }, theme: 'grid'  });
+    doc.text('Immeuble Junior',20, 35)
+
+    doc.text('1053 Tunis',20, 45)
+
+    doc.text('Tunisie',20, 55)
+
+    let pdfWidth = doc.internal.pageSize.getWidth();
+    doc.text("Numéro de facture : "+this.facture.numberOfFacture, pdfWidth - 100, 25); 
+    doc.text("Date de facture : "+this.datePipe.transform(this.facture.dateOfFacture,"yyyy-MM-dd"), pdfWidth - 100, 35);
+
+
+    autoTable(doc, { columns: this.exportColumns, body: bodys, margin: { top: 75 }, theme: 'grid' });
 
     doc.save("PlaisirDuChocolat.pdf");
   }
