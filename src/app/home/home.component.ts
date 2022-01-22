@@ -243,7 +243,7 @@ export class HomeComponent implements OnInit {
       { dataKey: 'dateDePeremption', header: 'Date de peremption' },
       { dataKey: 'validDate', header: 'Validité de date' },
       { dataKey: 'nbrDate', header: 'Nombre de jour' },
-      { dataKey: 'day', header: 'Jour' },
+      { dataKey: 'day', header: 'Jour Valide' },
     ];
     let bodys: any[] = [];
     this.products.forEach(element => {
@@ -292,9 +292,65 @@ export class HomeComponent implements OnInit {
     doc.save("PlaisirDuChocolat.pdf");
   }
 
+
+  
   imprimerPdf() {
+
+
+    this.exportColumns = [
+      { dataKey: 'name', header: 'Name' },
+      { dataKey: 'code', header: 'Code' },
+      { dataKey: 'quantity', header: 'Quantity' },
+      { dataKey: 'dateDeFabrication', header: 'Date de fabrication' },
+      { dataKey: 'dateDePeremption', header: 'Date de peremption' },
+      { dataKey: 'validDate', header: 'Validité de date' },
+      { dataKey: 'nbrDate', header: 'Nombre de jour' },
+      { dataKey: 'day', header: 'Jour' },
+    ];
+    let bodys: any[] = [];
+    this.products.forEach(element => {
+      let row = [element.name, element.code, element.quantite, element.dateDeFabrication, element.dateDePeremption, element.validDate, element.nbrDate, element.day]
+      bodys.push(row)
+    })
+
+
+    setTimeout(() => {
+      this.imprimerPdfData(bodys)
+    }, 100);
+
+  }
+
+  imprimerPdfData(bodys:any) {
     const doc = new jsPDF();
-    autoTable(doc, { html: '.p-datatable-table', theme: 'grid' });
+
+    const pageWidth = doc.internal.pageSize.width; //Optional
+    const pageHeight = doc.internal.pageSize.height; //Optional
+    let horizontalPos = pageWidth / 2; //Can be fixed number
+    let verticalPos = pageHeight - 10; //Can be fixed number
+
+    doc.setFont('bold');
+    doc.setFontSize(22);
+    doc.text("Plaisir du Chocolat", horizontalPos, 15, {
+      align: 'center'
+    });
+    doc.setFont('normal')
+    doc.setFontSize(14);
+
+    doc.text('Les Berges du Lac 1',20, 25)
+
+    doc.text('Immeuble Junior',20, 35)
+
+    doc.text('1053 Tunis',20, 45)
+
+    doc.text('Tunisie',20, 55)
+
+    let pdfWidth = doc.internal.pageSize.getWidth();
+    doc.text("Numéro de facture : "+this.facture.numberOfFacture, pdfWidth - 100, 25); 
+    doc.text("Date de facture : "+this.datePipe.transform(this.facture.dateOfFacture,"yyyy-MM-dd"), pdfWidth - 100, 35);
+
+
+
+    autoTable(doc, { columns: this.exportColumns, body: bodys, margin: { top: 75 }, theme: 'grid' });
     doc.autoPrint();
     doc.output('dataurlnewwindow');
   }
