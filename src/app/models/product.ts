@@ -8,4 +8,5 @@ export interface Product {
     validDate?:string,
     nbrDate?:number,
     day?:string,
+    delivery?:number;
 }

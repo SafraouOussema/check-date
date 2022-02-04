@@ -25,6 +25,7 @@ import { ProductService } from '../services/product.service';
 export class HomeComponent implements OnInit {
   productDialog: boolean;
   factureDialog: boolean;
+  deliveryDialog: boolean;
 
   products: Product[];
 
@@ -39,6 +40,8 @@ export class HomeComponent implements OnInit {
   facture: Facture;
   addFacture: Facture;
 
+  selectedDelivery: number;
+
   first = 0;
   rows = 10;
   constructor(private productService: ProductService,
@@ -52,6 +55,15 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     registerLocaleData(localeFr, 'fr');
     this.datePipe = new DatePipe("fr");
+
+    this.loadAllData();
+
+    this.factureService.getAllFacture().then(res => {
+      this.facture = res[0];
+    })
+  }
+
+  loadAllData() {
     this.productService.getAllProduit().then(data => {
 
       this.products = data;
@@ -63,10 +75,6 @@ export class HomeComponent implements OnInit {
         element.day = this.findMidelDqy(element.dateDeFabrication, element.dateDePeremption)
       })
 
-    })
-
-    this.factureService.getAllFacture().then(res => {
-        this.facture = res[0];
     })
   }
 
@@ -120,24 +128,33 @@ export class HomeComponent implements OnInit {
   saveProduct() {
     this.submitted = true;
 
-    if (this.product.name.trim()) {
-      if (this.product.id) {
-        this.productService.updateProduit(this.product).then(res => {
-          this.products[this.findIndexById(this.product.id)] = this.product;
-          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Produit mise a jour', life: 3000 });
+    console.log(this.product.delivery)
+    if (this.product.delivery != undefined && this.product.delivery != null && this.product.name != undefined && this.product.name != null && this.product.code != undefined && this.product.code != null && this.product.dateDeFabrication != undefined && this.product.dateDeFabrication != null && this.product.dateDePeremption != undefined && this.product.dateDePeremption != null) {
+      if (this.product.name.trim()) {
+        if (this.product.id) {
+          this.productService.updateProduit(this.product).then(res => {
+            this.products[this.findIndexById(this.product.id)] = this.product;
+            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Produit mise a jour', life: 3000 });
+            location.reload();
 
-        })
+          })
+        }
+        else {
+          this.productService.saveProduit(this.product).then(res => {
+            this.products.push(res);
+            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Produit ajouter', life: 3000 });
+            location.reload();
+
+          })
+        }
       }
-      else {
-        this.productService.saveProduit(this.product).then(res => {
-          this.products.push(res);
-          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Produit ajouter', life: 3000 });
-        })
-      }
-
-
       this.productDialog = false;
       this.product = {};
+    }
+
+    else {
+      this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Tous les champs sont obligatoires', life: 3000 });
+
     }
   }
 
@@ -179,6 +196,36 @@ export class HomeComponent implements OnInit {
       })
     }
     this.factureDialog = false;
+
+
+  }
+
+
+  openNewDelivery() {
+    this.deliveryDialog = true;
+  }
+
+  hideDialogDelivery() {
+    this.deliveryDialog = false;
+  }
+
+  saveDelivery() {
+    if (this.selectedDelivery == undefined && this.selectedDelivery == null) {
+      console.log("error")
+    } else {
+      this.productService.getProduitByDelivery(this.selectedDelivery).then(data => {
+        this.products = data;
+
+        this.products.forEach(element => {
+
+          element.validDate = this.checkVliditeOfDate(element.dateDeFabrication, element.dateDePeremption);
+          element.nbrDate = this.calculateNumberOfDay(element.dateDeFabrication, element.dateDePeremption)
+          element.day = this.findMidelDqy(element.dateDeFabrication, element.dateDePeremption)
+        })
+
+      })
+    }
+    this.deliveryDialog = false;
 
 
   }
@@ -274,17 +321,17 @@ export class HomeComponent implements OnInit {
     doc.setFont('normal')
     doc.setFontSize(14);
 
-    doc.text('Les Berges du Lac 1',20, 25)
+    doc.text('Les Berges du Lac 1', 20, 25)
 
-    doc.text('Immeuble Junior',20, 35)
+    doc.text('Immeuble Junior', 20, 35)
 
-    doc.text('1053 Tunis',20, 45)
+    doc.text('1053 Tunis', 20, 45)
 
-    doc.text('Tunisie',20, 55)
+    doc.text('Tunisie', 20, 55)
 
     let pdfWidth = doc.internal.pageSize.getWidth();
-    doc.text("Numéro de facture : "+this.facture.numberOfFacture, pdfWidth - 100, 25); 
-    doc.text("Date de facture : "+this.datePipe.transform(this.facture.dateOfFacture,"yyyy-MM-dd"), pdfWidth - 100, 35);
+    doc.text("Numéro de facture : " + this.facture.numberOfFacture, pdfWidth - 100, 25);
+    doc.text("Date de facture : " + this.datePipe.transform(this.facture.dateOfFacture, "yyyy-MM-dd"), pdfWidth - 100, 35);
 
 
     autoTable(doc, { columns: this.exportColumns, body: bodys, margin: { top: 75 }, theme: 'grid' });
@@ -293,7 +340,7 @@ export class HomeComponent implements OnInit {
   }
 
 
-  
+
   imprimerPdf() {
 
 
@@ -320,7 +367,7 @@ export class HomeComponent implements OnInit {
 
   }
 
-  imprimerPdfData(bodys:any) {
+  imprimerPdfData(bodys: any) {
     const doc = new jsPDF();
 
     const pageWidth = doc.internal.pageSize.width; //Optional
@@ -336,17 +383,17 @@ export class HomeComponent implements OnInit {
     doc.setFont('normal')
     doc.setFontSize(14);
 
-    doc.text('Les Berges du Lac 1',20, 25)
+    doc.text('Les Berges du Lac 1', 20, 25)
 
-    doc.text('Immeuble Junior',20, 35)
+    doc.text('Immeuble Junior', 20, 35)
 
-    doc.text('1053 Tunis',20, 45)
+    doc.text('1053 Tunis', 20, 45)
 
-    doc.text('Tunisie',20, 55)
+    doc.text('Tunisie', 20, 55)
 
     let pdfWidth = doc.internal.pageSize.getWidth();
-    doc.text("Numéro de facture : "+this.facture.numberOfFacture, pdfWidth - 100, 25); 
-    doc.text("Date de facture : "+this.datePipe.transform(this.facture.dateOfFacture,"yyyy-MM-dd"), pdfWidth - 100, 35);
+    doc.text("Numéro de facture : " + this.facture.numberOfFacture, pdfWidth - 100, 25);
+    doc.text("Date de facture : " + this.datePipe.transform(this.facture.dateOfFacture, "yyyy-MM-dd"), pdfWidth - 100, 35);
 
 
 

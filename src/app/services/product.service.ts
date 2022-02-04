@@ -10,7 +10,7 @@ export class ProductService {
 
     public API = 'https://juniorbackend.herokuapp.com/application';
 
-  //  public API = 'http://localhost:8080/application';
+  // public API = 'http://localhost:8080/application';
 
     public produitAPI = this.API + '/produit';
 
@@ -38,6 +38,13 @@ export class ProductService {
         return this.http.get(this.produitAPI + id, { responseType: 'json' }).toPromise()
             .then(response => response as any);
     }
+
+  
+    
+  getProduitByDelivery(code: number) {
+    return this.http.get(this.produitAPI + "/delivery/" + code, { responseType: 'json' }).toPromise()
+        .then(response => response as any);
+}
 
     /**
      * Saves produit
