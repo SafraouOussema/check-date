@@ -21,6 +21,7 @@
 
     .p-calendar .p-datepicker {
         min-width: 25rem;
+        top: -302px !important;
 
         td {
             font-weight: 400;
@@ -61,10 +62,10 @@
     padding-bottom: 25px !important;
 }
 
-:host ::ng-deep .p-datepicker {
-    left: 100px !important ;
-    top: -200px !important;
-}
+// :host ::ng-deep .p-datepicker {
+//     left: 100px !important ;
+//     top: -200px !important;
+// }
 
 :host ::ng-deep .p-dialog {
     height: 92% !important ;
