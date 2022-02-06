@@ -1,13 +1,17 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Product } from '../models/product';
 import { Facture } from '../models/facture';
-
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
 import { DatePipe, registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
-
 import { addDays, addMonths, differenceInDays, differenceInMonths, subDays, subMonths } from 'date-fns';
+
+import * as moment from 'moment';
+
+import { LocaleConfig } from 'ngx-daterangepicker-material';
+import * as dayjs from 'dayjs';
+
 
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -15,6 +19,7 @@ import autoTable from "jspdf-autotable";
 
 import { FactureService } from '../services/facture.service';
 import { ProductService } from '../services/product.service';
+
 
 
 @Component({
@@ -26,6 +31,7 @@ export class HomeComponent implements OnInit {
   productDialog: boolean;
   factureDialog: boolean;
   deliveryDialog: boolean;
+  isUpdate: boolean;
 
   products: Product[];
 
@@ -44,6 +50,16 @@ export class HomeComponent implements OnInit {
 
   first = 0;
   rows = 10;
+  alwaysShowCalendars: boolean
+
+  selectedDePeremption: any;
+  selectedDeFabrication: any;
+  selectedDeFacture: any;
+
+
+
+
+
   constructor(private productService: ProductService,
     private messageService: MessageService,
     private factureService: FactureService,
@@ -55,6 +71,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     registerLocaleData(localeFr, 'fr');
     this.datePipe = new DatePipe("fr");
+    this.alwaysShowCalendars = true;
 
     this.loadAllData();
 
@@ -78,10 +95,23 @@ export class HomeComponent implements OnInit {
     })
   }
 
+
+
+  locale: LocaleConfig = {
+    applyLabel: 'Appliquer',
+    customRangeLabel: ' - ',
+    daysOfWeek: moment.weekdaysMin(),
+    monthNames: moment.monthsShort(),
+    firstDay: moment.localeData().firstDayOfWeek(),
+  }
+
   openNew() {
     this.product = {};
     this.submitted = false;
     this.productDialog = true;
+    this.isUpdate = false;
+    this.selectedDePeremption = null;
+    this.selectedDeFabrication = null;
   }
 
 
@@ -101,7 +131,18 @@ export class HomeComponent implements OnInit {
   editProduct(product: Product) {
     this.product = { ...product };
     this.productDialog = true;
+    this.isUpdate = true;
 
+
+    this.selectedDePeremption = {
+      startDate: new Date(this.product.dateDePeremption),
+      endDate: new Date(this.product.dateDePeremption)
+    }
+
+    this.selectedDeFabrication = {
+      startDate: new Date(this.product.dateDeFabrication),
+      endDate: new Date(this.product.dateDeFabrication)
+    }
   }
 
   deleteProduct(product: Product) {
@@ -122,14 +163,25 @@ export class HomeComponent implements OnInit {
   hideDialog() {
     this.productDialog = false;
     this.submitted = false;
+    this.selectedDePeremption = null;
+    this.selectedDeFabrication = null;
+
   }
 
 
   saveProduct() {
-    this.submitted = true;
+    this.submitted = true; 
+    if (this.isUpdate == false) {
+      this.product.dateDePeremption = this.datePipe.transform(this.selectedDePeremption.endDate._d, "yyyy-MM-dd")
+      this.product.dateDeFabrication = this.datePipe.transform(this.selectedDeFabrication.endDate._d, "yyyy-MM-dd")
+    } else {
 
-    console.log(this.product.delivery)
+      this.product.dateDePeremption = this.datePipe.transform(this.selectedDePeremption.endDate, "yyyy-MM-dd")
+      this.product.dateDeFabrication = this.datePipe.transform(this.selectedDeFabrication.endDate, "yyyy-MM-dd")
+    } console.log(this.product)
+ 
     if (this.product.delivery != undefined && this.product.delivery != null && this.product.name != undefined && this.product.name != null && this.product.code != undefined && this.product.code != null && this.product.dateDeFabrication != undefined && this.product.dateDeFabrication != null && this.product.dateDePeremption != undefined && this.product.dateDePeremption != null) {
+
       if (this.product.name.trim()) {
         if (this.product.id) {
           this.productService.updateProduit(this.product).then(res => {
@@ -148,6 +200,7 @@ export class HomeComponent implements OnInit {
           })
         }
       }
+
       this.productDialog = false;
       this.product = {};
     }
@@ -181,18 +234,24 @@ export class HomeComponent implements OnInit {
   }
 
   saveFacture() {
+
     if (this.facture != undefined && this.facture != null) {
+      this.addFacture.dateOfFacture = this.datePipe.transform(this.selectedDeFacture.endDate._d, "yyyy-MM-dd")
+
       this.factureService.removeFacture(this.facture.id).then(res => {
         this.factureService.saveFacture(this.addFacture).then(res => {
           this.facture = res;
           this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Facture ajouter', life: 3000 });
+          this.selectedDeFacture = null
         })
 
       })
     } else {
+      this.addFacture.dateOfFacture = this.datePipe.transform(this.selectedDeFacture.endDate._d, "yyyy-MM-dd")
       this.factureService.saveFacture(this.addFacture).then(res => {
         this.facture = res;
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Facture ajouter', life: 3000 });
+        this.selectedDeFacture = null
       })
     }
     this.factureDialog = false;

@@ -62,15 +62,11 @@
     padding-bottom: 25px !important;
 }
 
-// :host ::ng-deep .p-datepicker {
-//     left: 100px !important ;
-//     top: -200px !important;
-// }
+  :host ::ng-deep .p-component-overlay {
+    overflow: scroll;
+    }
 
-:host ::ng-deep .p-dialog {
-    height: 92% !important ;
-}
-
+ 
 button {
     margin: 12px;
 }

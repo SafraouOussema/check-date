@@ -144,22 +144,33 @@
 
         </div>
 
-
+ 
         <div class="p-formgrid p-grid">
             <div class="p-field p-col">
                 <label for="dateDeFabrication">Date de fabrication</label>
-                <p-calendar yearRange="2000:2100" [showIcon]="true" dataType="string"
-                    [(ngModel)]="product.dateDeFabrication" dateFormat="yy-mm-dd">
-                </p-calendar>
-                <small class="p-invalid" *ngIf="submitted && !product.dateDeFabrication">Date de fabrication is
+                <input type="text" ngxDaterangepickerMd  [autoApply]="true"
+                class="form-control" placeholder="Choose date"
+               [showDropdowns]="true" [(ngModel)]="selectedDeFabrication"
+               [singleDatePicker]="true"
+               [locale]="locale" 
+               />
+                
+                <small class="p-invalid" *ngIf="submitted && !selectedDeFabrication">Date de fabrication is
                     required.</small>
             </div>
             <div class="p-field p-col">
-                <label for="dateDePeremption">Date de peremption</label>
-                <p-calendar yearRange="2000:2100" [showIcon]="true" dataType="string"
-                    [(ngModel)]="product.dateDePeremption" dateFormat="yy-mm-dd">
-                </p-calendar>
-                <small class="p-invalid" *ngIf="submitted && !product.dateDePeremption">Date de peremption is
+                <label for="dateDePeremption">Date de peremption</label> 
+
+                <input type="text" ngxDaterangepickerMd
+                [autoApply]="true"
+                class="form-control" placeholder="Choose date"
+                [showDropdowns]="true" [(ngModel)]="selectedDePeremption"
+                [singleDatePicker]="true"
+                [locale]="locale" 
+                />
+
+
+                <small class="p-invalid" *ngIf="submitted && !selectedDePeremption">Date de peremption is
                     required.</small>
             </div>
         </div>
@@ -175,7 +186,7 @@
     styleClass="p-fluid">
     <ng-template pTemplate="content">
 
-        <div style="padding-top: 200px;" class="p-formgrid p-grid">
+        <div   class="p-formgrid p-grid">
             <div class="p-field p-col">
                 <label for="name">Numéro de facture</label>
                 <input type="text" pInputText id="numberOfFacture" [(ngModel)]="addFacture.numberOfFacture" required
@@ -186,16 +197,20 @@
             <div class="p-field p-col">
 
                 <label for="dateOfFacture">Date de facture</label>
-                <p-calendar yearRange="2000:2100" [showIcon]="true" dataType="string"
-                    [(ngModel)]="addFacture.dateOfFacture" dateFormat="yy-mm-dd">
-                </p-calendar>
-                <small class="p-invalid" *ngIf="submitted && !addFacture.dateOfFacture">Date de fabrication est
+               
+                <input type="text" ngxDaterangepickerMd
+                [autoApply]="true"
+                class="form-control" placeholder="Choose date"
+                [showDropdowns]="true" [(ngModel)]="selectedDeFacture"
+                [singleDatePicker]="true"
+                [locale]="locale" 
+                />
+
+                <small class="p-invalid" *ngIf="submitted && !selectedDeFacture">Date de fabrication est
                     obligatoire.</small>
             </div>
 
-
         </div>
-
 
     </ng-template>
 

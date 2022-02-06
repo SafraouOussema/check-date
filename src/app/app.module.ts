@@ -34,6 +34,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
   
 import {DatePipe} from '@angular/common';
 import {InputSwitchModule} from 'primeng/inputswitch'; 
+import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 
 
 @NgModule({
@@ -43,7 +44,7 @@ import {InputSwitchModule} from 'primeng/inputswitch';
   ],
   imports: [
     
-      
+    NgxDaterangepickerMd.forRoot(),
     BrowserModule,
     BrowserAnimationsModule,
     TableModule,
