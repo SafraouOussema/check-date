@@ -62,11 +62,10 @@
     padding-bottom: 25px !important;
 }
 
-   :host ::ng-deep .p-component-overlay {
-    display: -webkit-box;
-    }
+:host ::ng-deep .md-drppicker {
+    top: 50% !important;
+}
 
- 
 button {
     margin: 12px;
 }
