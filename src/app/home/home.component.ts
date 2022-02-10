@@ -187,7 +187,8 @@ export class HomeComponent implements OnInit {
           this.productService.updateProduit(this.product).then(res => {
             this.products[this.findIndexById(this.product.id)] = this.product;
             this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Produit mise a jour', life: 3000 });
-            location.reload();
+            this.products=[];
+            this.loadAllData()
 
           })
         }
@@ -195,7 +196,8 @@ export class HomeComponent implements OnInit {
           this.productService.saveProduit(this.product).then(res => {
             this.products.push(res);
             this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Produit ajouter', life: 3000 });
-            location.reload();
+            this.products=[];
+            this.loadAllData()
 
           })
         }
